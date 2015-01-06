@@ -5,35 +5,54 @@
 */
 .section .init
 .globl _start
-
 _start:
-  // Set the GPIO address into reg 0
-  ldr r0,=0x20200000
+  b main
 
-  // Enable GPIO
-  mov r1,#1
-  lsl r1,#18
-  str r1,[r0,#4]
-  
-  mov r1,#1
-  lsl r1,#16
+.section .text
+main:
+  mov sp,#0x8000
+
+  // Set function to 1 on pin 16
+  pin_num .req r0
+  pin_func .req r1
+  mov pin_num,#16
+  mov pin_func,#1
+  bl set_gpio_function
+  .unreq pin_num
+  .unreq pin_func
 
   loop$:
+    // Turn the pin off to turn on the LED
+    pin_num .req r0
+    pin_val .req r1
+    mov pin_num,#16
+    mov pin_val,#0
+    bl set_gpio
+    .unreq pin_num
+    .unreq pin_val
 
-    str r1,[r0,#40]
-
-    mov r2,#0x3F0000
+    decr .req r0
+    mov decr,#0x3F0000
     wait1$:
-      sub r2,#1
-      cmp r2,#0
+      sub decr,#1
+      teq decr,#0
       bne wait1$
+    .unreq decr
 
-    str r1,[r0,#28]
+    pin_num .req r0
+    pin_val .req r1
+    mov pin_num,#16
+    mov pin_val,#1
+    bl set_gpio
+    .unreq pin_num
+    .unreq pin_val
 
-    mov r2,#0x3F0000
+    decr .req r0
+    mov decr,#0x3F0000
     wait2$:
-      sub r2,#1
-      cmp r2,#0
+      sub decr,#1
+      teq decr,#0
       bne wait2$
+    .unreq decr
 
   b loop$
