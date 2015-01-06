@@ -82,3 +82,25 @@ set_gpio:
   .unreq gpio_addr
 
   pop {pc}
+
+.globl gpio_set_status_on
+gpio_set_status_on:
+  push {lr}
+  mov r0,#16
+  mov r1,#1
+  bl set_gpio_function
+  mov r0,#16
+  mov r1,#0
+  bl set_gpio
+  pop {pc}
+
+.globl gpio_set_status_off
+gpio_set_status_off:
+  push {lr}
+  mov r0,#16
+  mov r1,#1
+  bl set_gpio_function
+  mov r0,#16
+  mov r1,#1
+  bl set_gpio
+  pop {pc}

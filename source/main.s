@@ -12,37 +12,47 @@ _start:
 main:
   mov sp,#0x8000
 
-  // Set function to 1 on pin 16
-  mov r0,#16
-  mov r1,#1
-  bl set_gpio_function
+  mov r0,#1024
+  mov r1,#768
+  mov r2,#16
 
-  ptrn .req r4
-  ldr ptrn,=pattern
-  ldr ptrn,[ptrn]
-  seq .req r5
-  mov seq,#0
+  bl init_framebuffer
 
-  mov r1,#1
-  lsl r1,seq
-  and r1,ptrn
+  teq r0,#0
+  bne no_error$
 
-  loop$:
-    mov r0,#16
-    mov r1,#1
-    lsl r1,seq
-    and r1,ptrn
-    bl set_gpio
+    bl gpio_set_status_on
 
-    ldr r0,=250000
-    bl sys_wait
+    error$:
+      b error$
 
-    add seq,#1
-    and seq,#0b11111
+  no_error$:
+  buffer_addr .req r4
+  mov buffer_addr,r0
 
-  b loop$
+  render$:
+    addr .req r3
+    ldr addr,[buffer_addr,#32]
 
-.section .data
-.align 2
-pattern:
-  .int 0b11111111101010100010001000101010
+    color .req r0
+    y .req r1
+    mov y,#768
+    draw_row$:
+      x .req r2
+      mov x,#1024
+      draw_pixel$:
+        strh color,[addr]
+        add addr,#2
+        sub x,#1
+        teq x,#0
+        bne draw_pixel$
+
+      sub y,#1
+      add color,#1
+      teq y,#0
+      bne draw_row$
+
+    b render$
+
+  .unreq addr
+  .unreq buffer_addr
