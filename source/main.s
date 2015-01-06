@@ -13,36 +13,36 @@ main:
   mov sp,#0x8000
 
   // Set function to 1 on pin 16
-  pin_num .req r0
-  pin_func .req r1
-  mov pin_num,#16
-  mov pin_func,#1
+  mov r0,#16
+  mov r1,#1
   bl set_gpio_function
-  .unreq pin_num
-  .unreq pin_func
+
+  ptrn .req r4
+  ldr ptrn,=pattern
+  ldr ptrn,[ptrn]
+  seq .req r5
+  mov seq,#0
+
+  mov r1,#1
+  lsl r1,seq
+  and r1,ptrn
 
   loop$:
-    // Turn the pin off to turn on the LED
-    pin_num .req r0
-    pin_val .req r1
-    mov pin_num,#16
-    mov pin_val,#0
+    mov r0,#16
+    mov r1,#1
+    lsl r1,seq
+    and r1,ptrn
     bl set_gpio
-    .unreq pin_num
-    .unreq pin_val
 
-    ldr r0,=0x1E8480
+    ldr r0,=250000
     bl sys_wait
 
-    pin_num .req r0
-    pin_val .req r1
-    mov pin_num,#16
-    mov pin_val,#1
-    bl set_gpio
-    .unreq pin_num
-    .unreq pin_val
-
-    ldr r0,=0x1E8480
-    bl sys_wait
+    add seq,#1
+    and seq,#0b11111
 
   b loop$
+
+.section .data
+.align 2
+pattern:
+  .int 0b11111111101010100010001000101010
