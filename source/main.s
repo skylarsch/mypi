@@ -12,3 +12,14 @@ _start:
 
   // Enable GPIO
   mov r1,#1
+  lsl r1,#18
+  str r1,[r0,#4]
+
+  // Turn off the pin to turn on the LED
+  mov r1,#1
+  lsl r1,#16
+  str r1,[r0,#40]
+
+  // Loop forever
+  loop$:
+  b loop$
