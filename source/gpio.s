@@ -83,6 +83,10 @@ set_gpio:
 
   pop {pc}
 
+/**
+ *  Turns the `ACT` LED on
+ *  C++ `void gpio_set_status_on()`
+ */
 .globl gpio_set_status_on
 gpio_set_status_on:
   push {lr}
@@ -94,6 +98,10 @@ gpio_set_status_on:
   bl set_gpio
   pop {pc}
 
+/**
+ *  Turns the `ACT` LED off
+ *  C++ `void gpio_set_status_off()`
+ */
 .globl gpio_set_status_off
 gpio_set_status_off:
   push {lr}
