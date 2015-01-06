@@ -1,0 +1,33 @@
+#!/bin/bash
+
+INSTALL_DIR="/Volumes/UNTITLED"
+CURRENT_DIR=$(pwd)
+KERN_FILE_NAME="kernel.img"
+
+if [[ ! -d "$INSTALL_DIR" ]]; then
+  echo "Can't find install location $INSTALL_DIR"
+  # If fswatch is installed wait for the install dir to be mounted
+  # run `brew install fswatch`
+  if hash fswatch 2>/dev/null; then
+    echo "Please insert SD card..."
+    fswatch "$INSTALL_DIR" | exit 0
+  else
+    exit 1
+  fi
+fi
+if [[ ! -e "$CURRENT_DIR/$KERN_FILE_NAME" ]]; then
+  echo "No '$KERN_FILE_NAME'  Building..."
+  make clean
+  make
+fi
+
+if [ -e "$INSTALL_DIR/$KERN_FILE_NAME" ]; then
+  echo "Removing $KERN_FILE_NAME from $INSTALL_DIR"
+  rm -f "$INSTALL_DIR/$KERN_FILE_NAME"
+fi
+
+echo "Copying $CURRENT_DIR/$KERN_FILE_NAME to $INSTALL_DIR/$KERN_FILE_NAME"
+cp "$CURRENT_DIR/$KERN_FILE_NAME" "$INSTALL_DIR/$KERN_FILE_NAME"
+
+echo "Unmounting $INSTALL_DIR"
+diskutil unmount "$INSTALL_DIR"
