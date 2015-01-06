@@ -31,13 +31,8 @@ main:
     .unreq pin_num
     .unreq pin_val
 
-    decr .req r0
-    mov decr,#0x3F0000
-    wait1$:
-      sub decr,#1
-      teq decr,#0
-      bne wait1$
-    .unreq decr
+    ldr r0,=0x1E8480
+    bl sys_wait
 
     pin_num .req r0
     pin_val .req r1
@@ -47,12 +42,7 @@ main:
     .unreq pin_num
     .unreq pin_val
 
-    decr .req r0
-    mov decr,#0x3F0000
-    wait2$:
-      sub decr,#1
-      teq decr,#0
-      bne wait2$
-    .unreq decr
+    ldr r0,=0x1E8480
+    bl sys_wait
 
   b loop$

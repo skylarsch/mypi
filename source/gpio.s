@@ -3,7 +3,7 @@
  *  return the base address of the GPIO region.
  *  C++ `void *get_gpio_address()`
  */
-.global get_gpio_address
+.globl get_gpio_address
 get_gpio_address:
   ldr r0,=0x20200000
   mov pc,lr
@@ -12,7 +12,7 @@ get_gpio_address:
  * Sets the function of GPIO register addressed by r0 to low 3 bit of r1
  * C++ `void set_gpio_function(u32 register, u32 function)`
  */
-.global set_gpio_function
+.globl set_gpio_function
 set_gpio_function:
   // Check that r0 <= 53 && r1 <= 7
   cmp r0,#53
@@ -38,7 +38,7 @@ set_gpio_function:
  * Sets the GPIO pin addressed by r0 to high if r1 != 0 and low other
  * C++ `void set_gpio(u32 register, u32 value)`
  */
-.global set_gpio
+.globl set_gpio
 set_gpio:
   pin_num .req r0
   pin_val .req r1
